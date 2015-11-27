@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <title>Заметки</title>
+
+    <!-- Bootstrap -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <script>
+      function addmes(){
+          document.getElementById('addmes').style.display = 'none';
+          document.getElementById('message').style.display = 'block';    
+      }
+
+      function check(){ 
+        var text = document.getElementById('text'); 
+        var btn = document.getElementById('btn'); 
+        text.value != '' ? btn.disabled = false : btn.disabled = true; 
+      }
+
+      function message(){
+          check();
+          value = localStorage.getItem('id');
+          
+          if(value){
+            id = value;
+            id++;
+          }
+          else{
+            id = 1;
+          }
+          
+          var data = new Date();
+          var value = document.getElementById('text').value;
+          var text = data +'</br>' + value;
+          
+          localStorage.setItem(id,text);
+          localStorage.setItem('id',id);
+          
+          document.getElementById('addmes').style.display = 'block';
+          document.getElementById('message').style.display = 'none'; 
+          document.getElementById('btn').disabled = 'disabled';
+          document.getElementById('text').value = '';
+          
+          if(text){
+            addLi(id,text);
+          } 
+        }
+
+      function load(){
+        var str = '\
+            <ul class="list-group" id="list">';
+        for(var i = 1; i <= localStorage.getItem('id'); i++){
+          var value = localStorage.getItem(i);
+          if(value){
+            str +='<button style="float:right;" type="submit" onclick="javascript:del(' + i + ')" id="id' + i + '"> \
+                    <span class="glyphicon glyphicon-remove"></span></button>\
+                    <li style="position: static; overflow-wrap: break-word;"class="list-group-item" id="id_'+ i +'">' + value + '</li>';
+          }
+        }
+        str +='</ul>';
+
+        var div = document.createElement('div');
+        div.innerHTML = str;
+        container.appendChild(div);
+      }
+
+      function addLi(id,text){
+        var newLi = document.createElement('li');
+
+        newLi.setAttribute("style","position:static; overflow-wrap: break-word");
+        newLi.className = 'list-group-item';
+        newLi.id = 'id_' + id;
+        newLi.innerHTML = text;
+        list.appendChild(newLi);
+
+        var elem = document.getElementById('id_' + id);
+        var newBut = document.createElement('button');
+
+        newBut.setAttribute("type","submit");
+        newBut.setAttribute("onclick","javascript:del(" + id + ")");
+        newBut.setAttribute("style","float:right");
+        newBut.id = 'id' + id;
+        newBut.innerHTML = '<span class="glyphicon glyphicon-remove"></span>';
+        list.insertBefore(newBut, elem)
+      }
+
+      function del(id){
+        localStorage.removeItem(id);
+
+        var elem = document.getElementById('id_' + id);
+        elem.parentNode.removeChild(elem);
+
+        var elem = document.getElementById('id' + id);
+        elem.parentNode.removeChild(elem);
+        }
+      
+    </script>
+  </head>
+  <body style="margin-top:20px;">
+    <div class="container" id="container" style="height:400px;overflow-y:scroll;">
+      <script>load();</script>
+    </div>
+    <div class="container">  
+      <a href="javascript:addmes()" id="addmes">Добавить заметку</a>
+      <form action="javascript:message()" style="display:none" id="message">
+        <textarea class="form-control" onkeyup="check()" onkeypress="check()" onchange="check()" rows="10" id="text"></textarea>
+        <button class="btn btn-default" type="submit" id="btn" disabled="disabled">Отправить</button>
+      </form>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="js/bootstrap.min.js"></script>
+  </body>
+</html>
